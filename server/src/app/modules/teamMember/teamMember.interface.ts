@@ -1,4 +1,4 @@
-// src/app/modules/teamMember/teamMember.interface.ts
+
 export interface ITeamMemberInput {
   id: string;
   name: string;
@@ -9,7 +9,6 @@ export interface ITeamMemberInput {
     platform: string;
     url: string;
   }[];
-  // avatar: বাদ দিলেও চলবে কারণ এটা service এ path থেকে ইনজেক্ট হচ্ছে
 }
 
 

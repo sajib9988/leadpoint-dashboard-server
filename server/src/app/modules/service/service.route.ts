@@ -1,19 +1,29 @@
-import { Router } from "express";
-import { bikeController } from "./service.controller";
-import Validator from "../../middleware/validator";
-import { bike_validation_schema } from "./service.validation";
+import { Request, Response, NextFunction, Router } from "express";
+import {  serviceController } from "./service.controller";
+
+import { serviceZodSchema } from "./service.validation";
+import { fileUploader } from "../../helper/fileUploader";
 
 
 const router = Router();
 
 
-router.post("/", Validator( bike_validation_schema.createBike), bikeController.bikeCreate);
-
-router.get("/", bikeController.getAllBike);
-
-router.get("/:id", bikeController.getSingleBike);
 
 
 
 
-export const bikeRoutes = router;
+router.post(
+  '/service',
+  fileUploader.upload.fields([
+    { name: 'icon', maxCount: 1 },
+    { name: 'image', maxCount: 1 },
+  ]),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = serviceZodSchema.parse(JSON.parse(req.body.data));
+    return serviceController.serviceCreate(req, res, next);
+  }
+);
+
+
+
+export const serviceRoute = router;

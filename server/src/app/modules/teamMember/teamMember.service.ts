@@ -19,7 +19,7 @@ const createTeamMemberService = async (req: Request) => {
       name,
       role,
       bio,
-      avatar, // এখন এটা Cloudinary এর লিংক হবে
+      avatar, 
       dataAiHint,
       socials: {
         create: req.body.socials,
