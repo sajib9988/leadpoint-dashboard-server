@@ -5,8 +5,7 @@ import { Request } from 'express';
 const addService= async (req: Request)=>{
   const { title, shortDescription, longDescription, slug, dataAiHint } = req.body;
 
-let icon = '';
-let image = '';
+
 
 const iconUrl = req.files?.icon
   ? (await fileUploader.uploadToCloudinary((req.files as any).icon[0]))?.secure_url || ''
