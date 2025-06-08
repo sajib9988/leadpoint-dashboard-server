@@ -1,5 +1,6 @@
 import { fileUploader } from "../../helper/fileUploader";
 import { prisma } from "../../middleware/prisma";
+import { Request } from 'express';
 
 const addService= async (req: Request)=>{
   const { title, shortDescription, longDescription, slug, dataAiHint } = req.body;
