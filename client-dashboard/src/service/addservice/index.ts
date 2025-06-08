@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 export const addService = async (data: FormData) => {
 
 // const accessToken = (await cookies()).get("accessToken")?.value;
-  const res = await fetch('${process.env.NEXT_PUBLIC_BASE_API}/service', {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/add-service`, {
     method: 'POST',
     //    headers: {
     //   Authorization : accessToken as string

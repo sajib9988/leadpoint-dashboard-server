@@ -13,7 +13,7 @@ const router = Router();
 
 
 router.post(
-  '/service',
+  '/add-service',
   fileUploader.upload.fields([
     { name: 'icon', maxCount: 1 },
     { name: 'image', maxCount: 1 },
