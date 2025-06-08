@@ -13,7 +13,7 @@ export const addService = async (data: FormData) => {
     // },
     body: data,
   });
-
+console.log('resss', res);
   if (!res.ok) {
     throw new Error('Failed to add service');
   }

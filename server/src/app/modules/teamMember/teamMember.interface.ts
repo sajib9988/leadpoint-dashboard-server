@@ -4,7 +4,7 @@ export interface ITeamMemberInput {
   name: string;
   role: string;
   bio: string;
-  dataAiHint: string;
+  
   socials: {
     platform: string;
     url: string;

@@ -29,7 +29,7 @@ const memberSchema = z.object({
   name: z.string().min(1),
   role: z.string().min(1),
   bio: z.string().min(1),
-  dataAiHint: z.string().min(1),
+
   socials: z.array(socialSchema),
   avatar: z.any()
 });
@@ -44,7 +44,7 @@ export function TeammemberForm() {
       name: '',
       role: '',
       bio: '',
-      dataAiHint: '',
+
       socials: [{ platform: '', url: '' }]
     }
   });

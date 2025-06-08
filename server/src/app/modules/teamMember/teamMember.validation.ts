@@ -7,7 +7,7 @@ export const teamMemberZodSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   role: z.string().min(1, 'Role is required'),
   bio: z.string().min(1, 'Bio is required'),
-  dataAiHint: z.string().min(1, 'Data AI Hint is required'),
+ 
   socials: z.array(
     z.object({
       platform: z.string().min(1),

@@ -3,7 +3,7 @@ import { prisma } from "../../middleware/prisma";
 import { Request } from 'express';
 
 const addService= async (req: Request)=>{
-  const { title, shortDescription, longDescription, slug, dataAiHint } = req.body;
+  const { title, shortDescription, longDescription, slug,  } = req.body;
 
 
 const { icon, image } = req.files as { [fieldname: string]: Express.Multer.File[] };
@@ -29,7 +29,7 @@ const newService = await prisma.service.create({
       slug,
       icon: iconUrl,
       image: imageUrl,
-      dataAiHint,
+     
     },
   });
 

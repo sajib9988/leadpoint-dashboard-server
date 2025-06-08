@@ -6,7 +6,7 @@ import { TeamMember } from '@prisma/client';
 import { fileUploader } from '../../helper/fileUploader'; // নিশ্চিত করুন import হয়েছে
 
 const createTeamMemberService = async (req: Request) => {
-  const { name, role, bio, dataAiHint } = req.body;
+  const { name, role, bio } = req.body;
 
   let avatar = '';
   if (req.file) {
@@ -20,7 +20,7 @@ const createTeamMemberService = async (req: Request) => {
       role,
       bio,
       avatar, 
-      dataAiHint,
+ 
       socials: {
         create: req.body.socials,
       },
