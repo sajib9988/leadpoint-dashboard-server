@@ -1,7 +1,7 @@
 import { fileUploader } from "../../helper/fileUploader";
 import { prisma } from "../../middleware/prisma";
 
-const addService= async ()=>{
+const addService= async (req: Request)=>{
   const { title, shortDescription, longDescription, slug, dataAiHint } = req.body;
 
 let icon = '';
