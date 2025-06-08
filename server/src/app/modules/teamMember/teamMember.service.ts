@@ -6,9 +6,6 @@ import { TeamMember } from '@prisma/client';
  const createTeamMemberService =  async (req: Request) => {
     const { name, role, bio, dataAiHint } = req.body;
     const avatar = req.file?.path || '';
-    const socialsString = req.body.socials || '[]';
-
-    const socials = JSON.parse(socialsString); // should be [{ platform: 'Facebook', url: '...' }]
 
     const newMember = await prisma.teamMember.create({
       data: {
@@ -18,7 +15,7 @@ import { TeamMember } from '@prisma/client';
         avatar,
         dataAiHint,
         socials: {
-          create: socials,
+          create: req.body.socials,
         },
       },
 
