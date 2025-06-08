@@ -3,26 +3,33 @@ import { prisma } from '../../middleware/prisma';
 import { TeamMember } from '@prisma/client';
 
 
- const createTeamMemberService =  async (req: Request) => {
-    const { name, role, bio, dataAiHint } = req.body;
-    const avatar = req.file?.path || '';
+import { fileUploader } from '../../helper/fileUploader'; // নিশ্চিত করুন import হয়েছে
 
-    const newMember = await prisma.teamMember.create({
-      data: {
-        name,
-        role,
-        bio,
-        avatar,
-        dataAiHint,
-        socials: {
-          create: req.body.socials,
-        },
-      },
+const createTeamMemberService = async (req: Request) => {
+  const { name, role, bio, dataAiHint } = req.body;
 
-    });
-
-    return newMember;
+  let avatar = '';
+  if (req.file) {
+    const uploaded = await fileUploader.uploadToCloudinary(req.file);
+    avatar = uploaded?.secure_url || '';
   }
+
+  const newMember = await prisma.teamMember.create({
+    data: {
+      name,
+      role,
+      bio,
+      avatar, // এখন এটা Cloudinary এর লিংক হবে
+      dataAiHint,
+      socials: {
+        create: req.body.socials,
+      },
+    },
+  });
+
+  return newMember;
+};
+
 
 
 
