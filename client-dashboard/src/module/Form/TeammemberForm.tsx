@@ -64,7 +64,7 @@ export function TeammemberForm() {
       name: data.name,
       role: data.role,
       bio: data.bio,
-      dataAiHint: data.dataAiHint,
+     
       socials: data.socials
     };
 
@@ -130,7 +130,12 @@ export function TeammemberForm() {
               )}
             />
 
-            <FormField
+       
+          </div>
+
+          {/* Right side */}
+          <div className="space-y-4">
+           <FormField
               control={form.control}
               name="bio"
               render={({ field }) => (
@@ -138,23 +143,6 @@ export function TeammemberForm() {
                   <FormLabel>Bio</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Enter Bio" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Right side */}
-          <div className="space-y-4">
-            <FormField
-              control={form.control}
-              name="dataAiHint"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>AI Hint</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter AI Hint" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,6 +193,9 @@ export function TeammemberForm() {
               </Button>
             </div>
 
+          </div>
+        </div>
+
             <FormField
               control={form.control}
               name="avatar"
@@ -218,9 +209,6 @@ export function TeammemberForm() {
                 </FormItem>
               )}
             />
-          </div>
-        </div>
-
         <Button type="submit" className="mt-4 w-full text-2xl">
           Submit
         </Button>

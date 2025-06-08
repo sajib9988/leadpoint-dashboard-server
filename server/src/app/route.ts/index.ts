@@ -16,6 +16,10 @@ const moduleRoutes = [
         path: '/team-members',
         route: teamMemberRouter
     },
+    {
+        path: '/',
+        route: teamMemberRouter
+    },
     
 ];
 

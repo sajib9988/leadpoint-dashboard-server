@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { toast } from "sonner"
+import { toast } from "sonner";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,67 +16,66 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { useRouter } from 'next/navigation';
+import { addService } from '@/service/addservice';
 
 const serviceSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   shortDescription: z.string().min(1, 'Short Description is required'),
   longDescription: z.string().min(1, 'Long Description is required'),
-  icon: z.string().min(1, 'Icon is required'),
   slug: z.string().min(1, 'Slug is required'),
-  dataAiHint: z.string().min(1, 'AI Hint is required'),
-  image: z.any()
+  icon: z.any().optional(),
+  image: z.any().optional()
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 export function AddServiceForm() {
   const router = useRouter();
+
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
     defaultValues: {
       title: '',
       shortDescription: '',
       longDescription: '',
-       slug: '',
-      dataAiHint: ''
+      slug: '',
+      icon: undefined,
+      image: undefined
     }
   });
 
-  const onSubmit = (data: ServiceFormValues) => {
-   
+  const onSubmit = async (data: ServiceFormValues) => {
     const formData = new FormData();
-    const body ={
-        title: data.title,
-        shortDescription: data.shortDescription,
-        longDescription: data.longDescription,
-        slug: data.slug,
-        dataAiHint: data.dataAiHint
-    }
-    
 
-    if(data.icon && data.icon.length>0){
-        formData.append('icon', data.icon[0])
-    }
-
-
-    if(data.image && data.image.length>0){
-        formData.append('image', data.image[0])  
-        
-    }
+    const body = {
+      title: data.title,
+      shortDescription: data.shortDescription,
+      longDescription: data.longDescription,
+      slug: data.slug
+    };
 
     formData.append('data', JSON.stringify(body));
 
-   
+    if (data.icon && data.icon.length > 0) {
+      formData.append('icon', data.icon[0]);
+    }
 
-      toast.success("service created successfully!")
-      form.reset()
-  
-      router.refresh()
+    if (data.image && data.image.length > 0) {
+      formData.append('image', data.image[0]);
+    }
 
+    try {
+     const res= await addService(formData);
 
+      console.log("Service created successfully!", res);
 
-
-
+      toast.success("Service created successfully!");
+      form.reset();
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create service.");
+    }
   };
 
   return (
@@ -134,11 +133,13 @@ export function AddServiceForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Icon</FormLabel>
-                 <Input
+                  <FormControl>
+                    <Input
                       type="file"
                       accept="image/*"
                       onChange={(e) => field.onChange(e.target.files)}
                     />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -150,20 +151,7 @@ export function AddServiceForm() {
                 <FormItem>
                   <FormLabel>Slug</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter unique slug" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="dataAiHint"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>AI Hint</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter AI Hint" {...field} />
+                    <Input placeholder="slug... like email-marketing" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -188,8 +176,7 @@ export function AddServiceForm() {
             />
           </div>
         </div>
-
-        <Button type="submit" className="mt-4">
+        <Button type="submit" className="mt-4 w-full">
           Submit
         </Button>
       </form>
