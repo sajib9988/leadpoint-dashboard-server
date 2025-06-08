@@ -5,7 +5,7 @@ export interface IServiceInput {
   shortDescription: string;
   longDescription: string;
   slug: string;
-  dataAiHint: string;
+
     icon?: string;
     image?: string;
 }
