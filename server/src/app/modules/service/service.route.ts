@@ -8,7 +8,7 @@ import { fileUploader } from "../../helper/fileUploader";
 const router = Router();
 
 
-
+router.get('/all-services', serviceController.getAllServices);
 
 
 

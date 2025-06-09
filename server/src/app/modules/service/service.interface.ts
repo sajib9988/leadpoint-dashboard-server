@@ -5,9 +5,8 @@ export interface IServiceInput {
   shortDescription: string;
   longDescription: string;
   slug: string;
-
-    icon?: string;
-    image?: string;
+icon?: string;
+ image?: string;
 }
 
 export interface IServiceUpdate {

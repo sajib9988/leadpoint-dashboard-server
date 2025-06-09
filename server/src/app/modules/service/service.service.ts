@@ -37,7 +37,14 @@ const addService = async (req: Request) => {
 };
 
 
+const getAllServices= async ()=>{
+  const services = await prisma.service.findMany();
+  console.log("📦 All Services:", services);
+  return services;
+}
+
 export const serviceServices = {
   addService,
+  getAllServices
 
 }

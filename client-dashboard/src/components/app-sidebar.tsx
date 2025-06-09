@@ -35,6 +35,18 @@ const data = {
       icon: Users,
       items: [],
     },
+    {
+      title: "get All Services",
+      url: "/dashboard/get-all-services",
+      icon: PlusCircle,
+      items: [],
+    },
+    {
+      title: "get All Team Members",
+      url: "/dashboard/get-all-team-members",
+      icon: PlusCircle,
+      items: [],
+    },
   ],
 }
 
