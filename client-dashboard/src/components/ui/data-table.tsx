@@ -22,12 +22,15 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
 
   return (
     <div className="p-4">
-      <table className="min-w-full border border-collapse">
+      <table className="min-w-full border border-gray-300 border-collapse">
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id} className="border-b">
+            <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <th key={header.id} className="p-2 text-left font-bold">
+                <th
+                  key={header.id}
+                  className="p-2 text-left font-bold border border-gray-300 bg-gray-100"
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(header.column.columnDef.header, header.getContext())}
@@ -38,9 +41,9 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => (
-            <tr key={row.id} className="border-b">
+            <tr key={row.id}>
               {row.getVisibleCells().map(cell => (
-                <td key={cell.id} className="p-2">
+                <td key={cell.id} className="p-2 border border-gray-300">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

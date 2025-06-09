@@ -36,3 +36,63 @@ export const getAllServices = async () => {
 
   return res.json();
 }
+
+
+
+export const getServiceById = async (id: string) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/get-service/${id}`, {
+    method: 'GET',
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.log("📛 Server Error:", errText);
+    throw new Error('Failed to fetch service');
+  }
+
+  return res.json();
+}
+
+
+
+
+
+
+
+
+
+
+
+export const deleteService = async (id: string) => {
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/delete-service/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.log("📛 Server Error:", errText);
+    throw new Error('Failed to delete service');
+  }
+
+  return res.json();
+}
+
+
+
+
+export const updateService = async (id: string, data: FormData) => {
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/update-service/${id}`, {
+    method: 'PUT',
+    body: data,
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.log("📛 Server Error:", errText);
+    throw new Error('Failed to update service');
+  }
+
+  return res.json();
+}

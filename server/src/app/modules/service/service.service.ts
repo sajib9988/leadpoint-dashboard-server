@@ -1,6 +1,7 @@
 import { fileUploader } from "../../helper/fileUploader";
 import { prisma } from "../../middleware/prisma";
 import { Request } from 'express';
+import { IServiceInput } from "./service.interface";
 
 const addService = async (req: Request) => {
   console.log("🔍 Final Parsed Body:", req.body);
@@ -43,8 +44,50 @@ const getAllServices= async ()=>{
   return services;
 }
 
+
+const updateService = async (id: string, data: IServiceInput) => {
+  const result = await prisma.service.update({
+    where: { id },
+    data: {
+      title: data.title,
+      shortDescription: data.shortDescription,
+      longDescription: data.longDescription,
+      slug: data.slug,
+      icon: data.icon,
+      image: data.image,
+    },
+  })
+return result;
+
+
+}
+
+const deleteService = async (id: string) => {
+  const result = await prisma.service.delete({
+    where: { id },
+  });
+  return result;
+}
+
+
+const getServiceById = async (id: string) => {
+  const service = await prisma.service.findUnique({
+    where: { id },
+  });
+  if (!service) {
+    throw new Error(`Service with ID ${id} not found`);
+  }
+  return service;
+}
+
+
+
+
 export const serviceServices = {
   addService,
-  getAllServices
+  getAllServices,
+  updateService,
+  deleteService,
+  getServiceById,
 
 }
