@@ -1,5 +1,7 @@
 'use server'
 
+import { revalidateTag } from "next/cache";
+
 // ✅ Add Service
 export const addService = async (data: FormData) => {
   console.log("📡 Sending POST to backend...");
@@ -74,6 +76,8 @@ export const updateService = async (id: string, data: FormData) => {
     method: 'PUT',
     body: data,
   });
+
+  revalidateTag('services');
 
   if (!res.ok) {
     const errText = await res.text();
