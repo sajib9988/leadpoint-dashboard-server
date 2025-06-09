@@ -27,18 +27,7 @@ const upload = multer({
         fileSize: 5 * 1024 * 1024,
         files: 1
     }
-},
-
-
-
-
-
-
-
-
-
-
-
+}
 );
 
 console.log('Multer storage initialized:', storage);

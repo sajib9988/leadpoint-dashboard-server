@@ -8,6 +8,5 @@ export const serviceZodSchema = z.object({
   longDescription: z.string().min(1, "Long description is required"),
   slug: z.string().min(1, "Slug is required"),
 
-  icon: z.string().optional(),
-  image: z.string().optional(),
+
 });

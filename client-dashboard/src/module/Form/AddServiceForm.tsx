@@ -45,6 +45,8 @@ export function AddServiceForm() {
   });
 
   const onSubmit = async (data: ServiceFormValues) => {
+
+      console.log("📤 Form Submit Data:", data)
     const formData = new FormData();
 
     const body = {
@@ -57,13 +59,15 @@ export function AddServiceForm() {
     formData.append('data', JSON.stringify(body));
 
     if (data.icon && data.icon.length > 0) {
+         console.log('Adding icon file:', data.icon[0]);
       formData.append('icon', data.icon[0]);
     }
 
     if (data.image && data.image.length > 0) {
+      console.log('Adding image file:', data.image[0]);
       formData.append('image', data.image[0]);
     }
-
+console.log("📦 FormData Ready to Send:", formData);
     try {
      const res= await addService(formData);
 

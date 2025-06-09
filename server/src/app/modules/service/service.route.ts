@@ -14,11 +14,15 @@ const router = Router();
 
 router.post(
   '/add-service',
+
+  
   fileUploader.upload.fields([
     { name: 'icon', maxCount: 1 },
     { name: 'image', maxCount: 1 },
   ]),
   (req: Request, res: Response, next: NextFunction) => {
+        console.log("📥 Incoming Request:", req.body);
+    console.log("🖼 Uploaded Files:", req.files);
     req.body = serviceZodSchema.parse(JSON.parse(req.body.data));
     return serviceController.serviceCreate(req, res, next);
   }
