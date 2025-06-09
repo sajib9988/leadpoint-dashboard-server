@@ -58,10 +58,46 @@ const getAllTeamMembersService = async (): Promise<TeamMember[]> => {
   return result;
 };
 
+const updateTeamMemberService = async ( id: string,req: Request) => {
+  const { name, role, bio } = req.body;
+  let avatar = '';  
+  if (req.file) {
+    const uploaded = await fileUploader.uploadToCloudinary(req.file);
+    avatar = uploaded?.secure_url || '';
+  }
+  const updatedMember = await prisma.teamMember.update({
+    where: { id },
+    data: {
+      name,
+      role,
+      bio,
+      avatar,
+      socials: {
+        upsert: req.body.socials.map((social: any) => ({
+          where: { id: social.id || '' },
+          create: social,
+          update: social,
+        })),
+      },
+    },
+  })
+  
+  return updatedMember;
+};
 
-export const teamMemberService ={
+
+
+
+
+
+
+
+
+
+  export const teamMemberService ={
     createTeamMemberService,
     getAllTeamMembersService,
     getSingleTeamMemberService,
     deleteTeamMemberService,
+    updateTeamMemberService,
 }

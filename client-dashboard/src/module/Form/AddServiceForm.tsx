@@ -15,7 +15,6 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form';
-import { useRouter } from 'next/navigation';
 import { addService } from '@/service/addservice';
 
 const serviceSchema = z.object({
@@ -29,8 +28,11 @@ const serviceSchema = z.object({
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
 
-export function AddServiceForm() {
-  const router = useRouter();
+interface AddServiceFormProps {
+  onSuccess?: () => void; // ✅ Add optional success callback
+}
+
+export function AddServiceForm({ onSuccess }: AddServiceFormProps) {
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
@@ -45,8 +47,7 @@ export function AddServiceForm() {
   });
 
   const onSubmit = async (data: ServiceFormValues) => {
-
-      console.log("📤 Form Submit Data:", data)
+    console.log("📤 Form Submit Data:", data)
     const formData = new FormData();
 
     const body = {
@@ -59,23 +60,26 @@ export function AddServiceForm() {
     formData.append('data', JSON.stringify(body));
 
     if (data.icon && data.icon.length > 0) {
-        //  console.log('Adding icon file:', data.icon[0]);
       formData.append('icon', data.icon[0]);
     }
 
     if (data.image && data.image.length > 0) {
-      // console.log('Adding image file:', data.image[0]);
       formData.append('image', data.image[0]);
     }
-console.log("📦 FormData Ready to Send:", formData);
+
+    console.log("📦 FormData Ready to Send:", formData);
+    
     try {
-     const res= await addService(formData);
-
+      const res = await addService(formData);
       console.log("Service created successfully!", res);
-
+      
       toast.success("Service created successfully!");
       form.reset();
-      router.refresh();
+      
+      // ✅ Call success callback to trigger refetch
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error(error);
       toast.error("Failed to create service.");

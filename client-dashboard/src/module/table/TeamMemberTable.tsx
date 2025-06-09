@@ -3,34 +3,34 @@
 import { useEffect, useState, useCallback } from 'react'
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from '@/components/ui/data-table'
-import { getAllServices } from '@/service/addservice'
-import { UpdateServiceFormModal } from '../modal/UpdateServiceFormModal'
-import { DeleteConfirmModal } from '../modal/DeleteConfirmModal'
 
-interface IService {
-  id: string;
-  title: string
-  shortDescription: string
-  longDescription: string
-  slug: string
-  icon?: string
-  image?: string
+import { DeleteConfirmModal } from '../modal/DeleteConfirmModal'
+import { getAllMember } from '@/service/AddTeamMember'
+import { UpdateMemberFormModal } from '../modal/UpdateMemberFormModal'
+
+interface IMember  {
+  id: string
+  name:string 
+  role: string
+  bio: string
+  socials: string
+  avatar: string
 }
 
-const columnHelper = createColumnHelper<IService>()
+const columnHelper = createColumnHelper<IMember>()
 
-const ServiceTable = () => {
-  const [data, setData] = useState<IService[]>([])
+const TeamMemberTable = () => {
+  const [data, setData] = useState<IMember[]>([])
   const [loading, setLoading] = useState(true)
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState<IService | null>(null);
+  const [selectedMember, setSelectedMember] = useState<IMember | null>(null);
 
   // ✅ Create a refetch function that can be called from anywhere
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
-      const res = await getAllServices()
+      const res = await getAllMember()
       console.log('res get service', res)
       setData(res.data)
     } catch (error) {
@@ -44,13 +44,13 @@ const ServiceTable = () => {
     fetchData()
   }, [fetchData])
 
-  const handleEdit = (service: IService) => {
-    setSelectedService(service);
+  const handleEdit = (service: IMember) => {
+    setSelectedMember(service);
     setIsUpdateModalOpen(true);
   };
 
-  const handleDelete = (service: IService) => {
-    setSelectedService(service);
+  const handleDelete = (service: IMember) => {
+    setSelectedMember(service);
     setIsDeleteModalOpen(true);
   };
 
@@ -66,34 +66,31 @@ const ServiceTable = () => {
     fetchData(); // Instant refetch
   };
 
-  const columns: ColumnDef<IService, any>[] = [
-    columnHelper.accessor('title', {
-      header: 'Title',
+  const columns: ColumnDef<IMember, any>[] = [
+    columnHelper.accessor('id', {
+      header: 'Id',
       cell: info => info.getValue(),
     }),
-    columnHelper.accessor('shortDescription', {
-      header: 'Short Description',
+    columnHelper.accessor('name', {
+      header: 'Name',
       cell: info => info.getValue(),
     }),
-    columnHelper.accessor('longDescription', {
-      header: 'Long Description',
+    columnHelper.accessor('role', {
+      header: 'Role',
       cell: info => <div className="line-clamp-2">{info.getValue()}</div>,
     }),
-    columnHelper.accessor('slug', {
-      header: 'Slug',
+    columnHelper.accessor('bio', {
+      header: 'Bio',
       cell: info => <span className="text-sm text-gray-600">{info.getValue()}</span>,
     }),
-    columnHelper.accessor('icon', {
-      header: 'Icon',
-      cell: info =>
-        info.getValue() ? (
-          <img src={info.getValue()} alt="icon" className="w-6 h-6" />
-        ) : (
-          '—'
-        ),
-    }),
-    columnHelper.accessor('image', {
-      header: 'Image',
+    columnHelper.accessor('socials', {
+      header: 'Socials',
+      cell: info =><span className="text-sm text-gray-600">{info.getValue()}</span>,
+        
+ } ),
+  
+    columnHelper.accessor('avatar', {
+      header: 'Avatar',
       cell: info =>  
         info.getValue() ? (
           <img src={info.getValue()} alt="image" className="w-12 h-12 rounded" />
@@ -129,27 +126,27 @@ const ServiceTable = () => {
       {loading ? <p>Loading...</p> : <DataTable columns={columns} data={data} />}
 
       {/* Update Modal */}
-      {selectedService && (
-        <UpdateServiceFormModal
+      {selectedMember && (
+        <UpdateMemberFormModal
           isOpen={isUpdateModalOpen}
           onClose={() => setIsUpdateModalOpen(false)}
-          onSuccess={handleUpdateSuccess} // ✅ Pass success callback
-          serviceId={selectedService.id}
-          initialData={selectedService}
+          onSuccess={handleUpdateSuccess}
+          memberId={selectedMember.id}
+          initialData={selectedMember}
         />
       )}
 
       {/* Delete Modal */}
-      {selectedService && (
+      {selectedMember && (
         <DeleteConfirmModal
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
-          onSuccess={handleDeleteSuccess} // ✅ Pass success callback
-          serviceId={selectedService.id}
+          onSuccess={handleDeleteSuccess}
+          memberId={selectedMember.id}
         />
       )}
     </div>
   );
 }
 
-export default ServiceTable
+export default TeamMemberTable

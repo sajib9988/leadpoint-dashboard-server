@@ -1,9 +1,10 @@
-import React from 'react'
+import TeamMemberTable from '@/module/table/TeamMemberTable'
+
 
 const GetAllTeamMemberPage = () => {
   return (
     <div>
-<h1>get all team page </h1>
+<TeamMemberTable></TeamMemberTable>
     </div>
   )
 }
