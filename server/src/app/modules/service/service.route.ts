@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, Router } from "express";
 import {  serviceController } from "./service.controller";
 
-import { serviceZodSchema } from "./service.validation";
+import { serviceZodSchema, updateServiceZodSchema } from "./service.validation";
 import { fileUploader } from "../../helper/fileUploader";
 
 
@@ -23,7 +23,7 @@ router.put(
   (req: Request, res: Response, next: NextFunction) => {
     console.log("📥 Incoming Request:", req.body);
     console.log("🖼 Uploaded Files:", req.files);
-    req.body = serviceZodSchema.parse(JSON.parse(req.body.data));
+    req.body = updateServiceZodSchema.parse(JSON.parse(req.body.data));
     return serviceController.updateService(req, res, next);
   }
 );
@@ -38,8 +38,7 @@ router.post(
     { name: 'image', maxCount: 1 },
   ]),
   (req: Request, res: Response, next: NextFunction) => {
-        console.log("📥 Incoming Request:", req.body);
-    console.log("🖼 Uploaded Files:", req.files);
+     
     req.body = serviceZodSchema.parse(JSON.parse(req.body.data));
     return serviceController.serviceCreate(req, res, next);
   }

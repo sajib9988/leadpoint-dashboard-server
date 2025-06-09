@@ -45,19 +45,40 @@ const getAllServices= async ()=>{
 }
 
 
-const updateService = async (id: string, data: IServiceInput) => {
+const updateService = async (id: string, data: any, files?: any) => {
+  // Fetch existing service for fallback values
+  const existing = await prisma.service.findUnique({ where: { id } });
+  if (!existing) throw new Error(`Service with ID ${id} not found`);
+
+  let iconUrl = existing.icon;
+  let imageUrl = existing.image;
+
+  // If files are provided (from multer)
+  if (files) {
+    if (files.icon && files.icon[0]) {
+      iconUrl = (await fileUploader.uploadToCloudinary(files.icon[0]))?.secure_url || iconUrl;
+    }
+    if (files.image && files.image[0]) {
+      imageUrl = (await fileUploader.uploadToCloudinary(files.image[0]))?.secure_url || imageUrl;
+    }
+  } else {
+    // If no files, but data.icon/image is a string, use it
+    if (typeof data.icon === 'string' && data.icon) iconUrl = data.icon;
+    if (typeof data.image === 'string' && data.image) imageUrl = data.image;
+  }
+
   const result = await prisma.service.update({
     where: { id },
     data: {
-      title: data.title,
-      shortDescription: data.shortDescription,
-      longDescription: data.longDescription,
-      slug: data.slug,
-      icon: data.icon,
-      image: data.image,
+      title: data.title ?? existing.title,
+      shortDescription: data.shortDescription ?? existing.shortDescription,
+      longDescription: data.longDescription ?? existing.longDescription,
+      slug: data.slug ?? existing.slug,
+      icon: iconUrl,
+      image: imageUrl,
     },
-  })
-return result;
+  });
+  return result;
 
 
 }

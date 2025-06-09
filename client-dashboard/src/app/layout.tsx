@@ -4,6 +4,7 @@ import "./globals.css";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import App from "next/app";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +40,7 @@ export default function RootLayout({
             <SidebarTrigger className="-ml-1" />
           </div>
         </header>
+              <Toaster richColors position="top-center" />
         <div className="p-4 pt-0 min-h-screen">{children}</div>
       </SidebarInset>
     </SidebarProvider>

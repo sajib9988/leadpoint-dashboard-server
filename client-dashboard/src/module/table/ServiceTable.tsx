@@ -9,6 +9,7 @@ import { DeleteConfirmModal } from '../modal/DeleteConfirmModal'
 
 
 interface IService {
+  id: string; // <-- add this line
   title: string
   shortDescription: string
   longDescription: string
@@ -120,7 +121,7 @@ return (
       <UpdateServiceFormModal
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
-        serviceId={selectedService.slug}
+        serviceId={selectedService.id} // <-- use the real id, not services.id or slug
         initialData={selectedService}
       />
     )}
@@ -130,7 +131,7 @@ return (
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        serviceId={selectedService.slug}
+        serviceId={selectedService.id}
       />
     )}
   </div>

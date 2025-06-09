@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { updateService } from '@/service/addservice';
 import { useEffect } from 'react';
+import Image from 'next/image';
 
 
 const serviceSchema = z.object({
@@ -53,9 +54,6 @@ export function UpdateServiceFormModal({ isOpen, onClose, serviceId, initialData
   });
 
 
-  useEffect(() => {
-     
-  }, [])
 
 
 
@@ -152,8 +150,30 @@ export function UpdateServiceFormModal({ isOpen, onClose, serviceId, initialData
                 <FormItem>
                   <FormLabel>Icon</FormLabel>
                   <FormControl>
-                    <Input type="file" accept="image/*" onChange={e => field.onChange(e.target.files)} />
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={e => field.onChange(e.target.files && e.target.files[0] ? [e.target.files[0]] : [])}
+                    />
                   </FormControl>
+                  {initialData.icon && typeof initialData.icon === 'string' && (
+        <Image
+          src={initialData.icon}
+          alt="Icon Preview"
+          width={48}
+          height={48}
+          className="w-12 h-12 mt-2"
+        />
+      )}
+      {initialData.icon && typeof initialData.icon !== 'string' && (
+        <Image
+          src={URL.createObjectURL(initialData.icon[0])}
+          alt="Icon Preview"
+          width={48}
+          height={48}
+          className="w-12 h-12 mt-2"
+        />
+      )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -165,8 +185,30 @@ export function UpdateServiceFormModal({ isOpen, onClose, serviceId, initialData
                 <FormItem>
                   <FormLabel>Image</FormLabel>
                   <FormControl>
-                    <Input type="file" accept="image/*" onChange={e => field.onChange(e.target.files)} />
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={e => field.onChange(e.target.files && e.target.files[0] ? [e.target.files[0]] : [])}
+                    />
                   </FormControl>
+                  {initialData.image && typeof initialData.image === 'string' && (
+        <Image
+          src={initialData.image}
+          alt="Image Preview"
+          width={96}
+          height={96}
+          className="w-24 h-24 mt-2 rounded"
+        />
+      )}
+      {initialData.image && typeof initialData.image !== 'string' && (
+        <Image
+          src={URL.createObjectURL(initialData.image[0])}
+          alt="Image Preview"
+          width={96}
+          height={96}
+          className="w-24 h-24 mt-2 rounded"
+        />
+      )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -176,7 +218,7 @@ export function UpdateServiceFormModal({ isOpen, onClose, serviceId, initialData
           </div>
         </form>
       </Form>
-      </DialogContent>
+    </DialogContent>
     </Dialog>
   );
 }
