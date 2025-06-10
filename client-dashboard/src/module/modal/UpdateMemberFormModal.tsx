@@ -81,9 +81,19 @@ export function UpdateMemberFormModal({
             })
         );
 
-        if (data.avatar && data.avatar.length > 0) {
+        // The 'avatar' field from react-hook-form with a file input
+        // will be an array of File objects if a file is selected,
+        // or potentially an empty array or undefined if cleared/not touched.
+        // initialData.avatar can be a string (URL).
+
+        if (data.avatar && Array.isArray(data.avatar) && data.avatar.length > 0 && data.avatar[0] instanceof File) {
+            // A new file has been selected
             formData.append('avatar', data.avatar[0]);
         }
+        // If data.avatar is not an array of files (e.g., it's the initial string URL,
+        // or the file input was cleared, or no new file was chosen),
+        // we don't append 'avatar' to formData.
+        // This assumes the backend will not change the avatar if the 'avatar' field is absent.
 
         try {
             await updateMember(memberId, formData);
