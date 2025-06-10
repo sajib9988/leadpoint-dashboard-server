@@ -25,8 +25,8 @@ export const addTeamMember= async(data:FormData)=>{
 }
 
 export const getAllMember =async()=>{
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/team-member/members`, {
-        method: 'Get',
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/team-members/members`, {
+        method: 'GET',
         // headers: {
         // Authorization: accessToken as string
         // },
@@ -34,7 +34,9 @@ export const getAllMember =async()=>{
     });
     
     if (!res.ok) {
-        throw new Error('Failed to add team member');
+        const errText = await res.text();
+        console.log('📛 Server Error:', errText);
+        throw new Error('Failed to get team members');
     }
     
     return res.json();

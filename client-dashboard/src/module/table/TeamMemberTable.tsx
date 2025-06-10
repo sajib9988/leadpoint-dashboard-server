@@ -8,12 +8,12 @@ import { DeleteConfirmModal } from '../modal/DeleteConfirmModal'
 import { getAllMember } from '@/service/AddTeamMember'
 import { UpdateMemberFormModal } from '../modal/UpdateMemberFormModal'
 
-interface IMember  {
+interface IMember {
   id: string
-  name:string 
+  name: string
   role: string
   bio: string
-  socials: string
+  socials: { platform: string; url: string }[]
   avatar: string
 }
 
@@ -22,17 +22,27 @@ const columnHelper = createColumnHelper<IMember>()
 const TeamMemberTable = () => {
   const [data, setData] = useState<IMember[]>([])
   const [loading, setLoading] = useState(true)
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<IMember | null>(null);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [selectedMember, setSelectedMember] = useState<IMember | null>(null)
 
-  // ✅ Create a refetch function that can be called from anywhere
+  // ✅ fetchData ফাংশনে socials.create থেকে data ঠিক করে আনছি
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
       const res = await getAllMember()
       console.log('res get service', res)
-      setData(res.data)
+
+      const formattedData = res.data.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        role: item.role,
+        bio: item.bio,
+        avatar: item.avatar,
+        socials: item.socials?.create || [],
+      }))
+
+      setData(formattedData)
     } catch (error) {
       console.error('Error fetching data:', error)
     } finally {
@@ -44,27 +54,25 @@ const TeamMemberTable = () => {
     fetchData()
   }, [fetchData])
 
-  const handleEdit = (service: IMember) => {
-    setSelectedMember(service);
-    setIsUpdateModalOpen(true);
-  };
+  const handleEdit = (member: IMember) => {
+    setSelectedMember(member)
+    setIsUpdateModalOpen(true)
+  }
 
-  const handleDelete = (service: IMember) => {
-    setSelectedMember(service);
-    setIsDeleteModalOpen(true);
-  };
+  const handleDelete = (member: IMember) => {
+    setSelectedMember(member)
+    setIsDeleteModalOpen(true)
+  }
 
-  // ✅ Handle successful update - refetch data instantly
   const handleUpdateSuccess = () => {
-    setIsUpdateModalOpen(false);
-    fetchData(); // Instant refetch
-  };
+    setIsUpdateModalOpen(false)
+    fetchData()
+  }
 
-  // ✅ Handle successful delete - refetch data instantly
   const handleDeleteSuccess = () => {
-    setIsDeleteModalOpen(false);
-    fetchData(); // Instant refetch
-  };
+    setIsDeleteModalOpen(false)
+    fetchData()
+  }
 
   const columns: ColumnDef<IMember, any>[] = [
     columnHelper.accessor('id', {
@@ -85,13 +93,29 @@ const TeamMemberTable = () => {
     }),
     columnHelper.accessor('socials', {
       header: 'Socials',
-      cell: info =><span className="text-sm text-gray-600">{info.getValue()}</span>,
-        
- } ),
-  
+      cell: info =>
+        Array.isArray(info.getValue()) ? (
+          <ul>
+            {info.getValue().map((s: { platform: string; url: string }, i: number) => (
+              <li key={i}>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline"
+                >
+                  {s.platform}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          '—'
+        ),
+    }),
     columnHelper.accessor('avatar', {
       header: 'Avatar',
-      cell: info =>  
+      cell: info =>
         info.getValue() ? (
           <img src={info.getValue()} alt="image" className="w-12 h-12 rounded" />
         ) : (
@@ -122,7 +146,7 @@ const TeamMemberTable = () => {
 
   return (
     <div className="max-w-6xl mx-auto mt-6">
-      <h1 className="text-2xl font-bold mb-4">Service Table</h1>
+      <h1 className="text-2xl font-bold mb-4">Team Members</h1>
       {loading ? <p>Loading...</p> : <DataTable columns={columns} data={data} />}
 
       {/* Update Modal */}
@@ -132,7 +156,13 @@ const TeamMemberTable = () => {
           onClose={() => setIsUpdateModalOpen(false)}
           onSuccess={handleUpdateSuccess}
           memberId={selectedMember.id}
-          initialData={selectedMember}
+          initialData={{
+            name: selectedMember.name,
+            role: selectedMember.role,
+            bio: selectedMember.bio,
+            socials: selectedMember.socials,
+            avatar: selectedMember.avatar,
+          }}
         />
       )}
 
@@ -146,7 +176,7 @@ const TeamMemberTable = () => {
         />
       )}
     </div>
-  );
+  )
 }
 
 export default TeamMemberTable

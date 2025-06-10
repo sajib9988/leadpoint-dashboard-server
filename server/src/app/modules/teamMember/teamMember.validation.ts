@@ -15,3 +15,21 @@ export const teamMemberZodSchema = z.object({
     })
   ).min(1, 'At least one social is required'),
 });
+
+
+
+
+export const updateTeamMemberZodSchema = z.object({
+  id: z.string().min(1, 'ID is required').optional(),
+  name: z.string().min(1, 'Name is required').optional(),
+    role: z.string().min(1, 'Role is required').optional(),
+    bio: z.string().min(1, 'Bio is required').optional(),
+    socials: z.array(
+      z.object({
+        platform: z.string().min(1).optional(),
+        url: z.string().url().optional()
+      })
+    ).optional()
+  })
+
+

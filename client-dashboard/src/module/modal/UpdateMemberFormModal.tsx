@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
@@ -25,11 +25,15 @@ import { toast } from 'sonner';
 import Image from 'next/image';
 import { updateMember } from '@/service/AddTeamMember';
 
+const socialSchema = z.object({
+    platform: z.string().min(1),
+    url: z.string().url()
+});
 const memberSchema = z.object({
     name: z.string().min(1),
     role: z.string().min(1),
     bio: z.string().min(1),
-    socials: z.string().min(1),
+    socials: z.array(socialSchema),
     avatar: z.any().optional(),
 });
 
@@ -57,6 +61,11 @@ export function UpdateMemberFormModal({
     const form = useForm<MemberFormValues>({
         resolver: zodResolver(memberSchema),
         defaultValues: initialData,
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: 'socials',
     });
 
     const onSubmit = async (data: MemberFormValues) => {
@@ -133,17 +142,49 @@ export function UpdateMemberFormModal({
                                     )}
                                 />
 
-                                <FormField
-                                    control={form.control}
-                                    name="socials"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Socials</FormLabel>
-                                            <FormControl><Input {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                {/* Socials as array */}
+                                <div className="space-y-2">
+                                    <label className="font-medium">Social Links</label>
+                                    {fields.map((field, index) => (
+                                        <div key={field.id} className="flex gap-3">
+                                            <FormField
+                                                control={form.control}
+                                                name={`socials.${index}.platform`}
+                                                render={({ field }) => (
+                                                    <FormItem className="flex-1">
+                                                        <FormControl>
+                                                            <Input placeholder="Platform (e.g. Facebook)" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name={`socials.${index}.url`}
+                                                render={({ field }) => (
+                                                    <FormItem className="flex-1">
+                                                        <FormControl>
+                                                            <Input placeholder="URL (https://...)" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <Button type="button" variant="destructive" onClick={() => remove(index)}>
+                                                ✕
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    <Button
+                                        type="button"
+                                        onClick={() => append({ platform: '', url: '' })}
+                                        variant="outline"
+                                        className="ml-2"
+                                    >
+                                        + Add Social Link
+                                    </Button>
+                                </div>
 
                                 <FormField
                                     control={form.control}
@@ -161,13 +202,23 @@ export function UpdateMemberFormModal({
                                                 />
                                             </FormControl>
                                             {initialData.avatar && typeof initialData.avatar === 'string' && (
-                                                <Image
-                                                    src={initialData.avatar}
-                                                    alt="Avatar Preview"
-                                                    width={96}
-                                                    height={96}
-                                                    className="w-24 h-24 mt-2 rounded"
-                                                />
+                                                initialData.avatar.startsWith('http') || initialData.avatar.startsWith('/') ? (
+                                                    <Image
+                                                        src={initialData.avatar}
+                                                        alt="Avatar Preview"
+                                                        width={96}
+                                                        height={96}
+                                                        className="w-24 h-24 mt-2 rounded"
+                                                    />
+                                                ) : (
+                                                    <img
+                                                        src={initialData.avatar}
+                                                        alt="Avatar Preview"
+                                                        width={96}
+                                                        height={96}
+                                                        className="w-24 h-24 mt-2 rounded"
+                                                    />
+                                                )
                                             )}
                                             {initialData.avatar && typeof initialData.avatar !== 'string' && (
                                                 <Image
