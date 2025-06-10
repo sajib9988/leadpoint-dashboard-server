@@ -3,261 +3,237 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-
 import Image from 'next/image';
 import { updateMember } from '@/service/AddTeamMember';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const socialSchema = z.object({
-    platform: z.string().min(1),
-    url: z.string().url()
+  platform: z.string().min(1, 'Platform is required'),
+  url: z.string().url('Invalid URL'),
 });
+
 const memberSchema = z.object({
-    name: z.string().min(1),
-    role: z.string().min(1),
-    bio: z.string().min(1),
-    socials: z.array(socialSchema),
-    avatar: z.any().optional(),
+  name: z.string().min(1, 'Name is required'),
+  role: z.string().min(1, 'Role is required'),
+  bio: z.string().min(1, 'Bio is required'),
+  socials: z.array(socialSchema).min(1, 'At least one social link is required'),
+  avatar: z.any().optional(),
 });
 
 export type MemberFormValues = z.infer<typeof memberSchema>;
 
-
-
-
-type UpdateServiceFormModalProps = {
-    isOpen: boolean;
-    onClose: () => void;
-    onSuccess?: () => void; // ✅ Add success callback
-    memberId: string;
-    initialData: MemberFormValues;
+type UpdateMemberFormModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess?: () => void;
+  memberId: string;
+  initialData: MemberFormValues;
 };
 
 export function UpdateMemberFormModal({
-    isOpen,
-    onClose,
-    onSuccess,
-    memberId,
-    initialData
-}: UpdateServiceFormModalProps) {
+  isOpen,
+  onClose,
+  onSuccess,
+  memberId,
+  initialData,
+}: UpdateMemberFormModalProps) {
 
-    const form = useForm<MemberFormValues>({
-        resolver: zodResolver(memberSchema),
-        defaultValues: initialData,
-    });
+const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const form = useForm<MemberFormValues>({
+    resolver: zodResolver(memberSchema),
+    defaultValues: initialData,
+  });
 
-    const { fields, append, remove } = useFieldArray({
-        control: form.control,
-        name: 'socials',
-    });
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'socials',
+  });
 
-    const onSubmit = async (data: MemberFormValues) => {
-        const formData = new FormData();
+const onSubmit = async (data: MemberFormValues) => {
+  setIsSubmitting(true); // Start loading
 
-        formData.append(
-            'data',
-            JSON.stringify({
-                name: data.name,
-                role: data.role,
-                bio: data.bio,
-                socials: data.socials,
-            })
-        );
+  const formData = new FormData();
+  formData.append(
+    'data',
+    JSON.stringify({
+      name: data.name,
+      role: data.role,
+      bio: data.bio,
+      socials: Array.isArray(data.socials) ? data.socials : [],
+    })
+  );
 
-        // The 'avatar' field from react-hook-form with a file input
-        // will be an array of File objects if a file is selected,
-        // or potentially an empty array or undefined if cleared/not touched.
-        // initialData.avatar can be a string (URL).
+  if (data.avatar && data.avatar instanceof File) {
+    formData.append('avatar', data.avatar);
+  }
 
-        if (data.avatar && Array.isArray(data.avatar) && data.avatar.length > 0 && data.avatar[0] instanceof File) {
-            // A new file has been selected
-            formData.append('avatar', data.avatar[0]);
-        }
-        // If data.avatar is not an array of files (e.g., it's the initial string URL,
-        // or the file input was cleared, or no new file was chosen),
-        // we don't append 'avatar' to formData.
-        // This assumes the backend will not change the avatar if the 'avatar' field is absent.
-
-        try {
-            await updateMember(memberId, formData);
-            toast.success('Team member updated successfully!');
-            onSuccess?.();
-        } catch (err) {
-            toast.error('Failed to update team member');
-            console.error('Error updating member:', err);
-        }
-    };
+  try {
+    await updateMember(memberId, formData);
+    toast.success("Member updated successfully!");
+    form.reset();
+    router.push("/");
+    router.refresh();
+    onSuccess?.();
+    onClose();
+  } catch (err) {
+    toast.error('Failed to update team member');
+    console.error('Error updating member:', err);
+  } finally {
+    setIsSubmitting(false); // Stop loading
+  }
+};
 
 
-    return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-4xl">
-                <DialogHeader>
-                    <DialogTitle>Update Service</DialogTitle>
-                </DialogHeader>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <div className='flex justify-between items-start space-x-4'>
-                            <div className="flex-1 space-y-4">
-                                <FormField
-                                    control={form.control}
-                                    name="name"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Name</FormLabel>
-                                            <FormControl><Input {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>Update Team Member</DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Two-column layout */}
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Left column: Form fields */}
+              <div className="flex-1 space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Enter name" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Enter role" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bio</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} placeholder="Enter bio" rows={4} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="space-y-2">
+                  <label className="font-medium">Social Links</label>
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="flex gap-3">
+                      <FormField
+                        control={form.control}
+                        name={`socials.${index}.platform`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormControl>
+                              <Input placeholder="Platform (e.g. Facebook)" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`socials.${index}.url`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormControl>
+                              <Input placeholder="URL (https://...)" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="button" variant="destructive" onClick={() => remove(index)}>
+                        ✕
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    onClick={() => append({ platform: '', url: '' })}
+                    variant="outline"
+                    className="ml-2"
+                  >
+                    + Add Social Link
+                  </Button>
+                </div>
+              </div>
 
-                                <FormField
-                                    control={form.control}
-                                    name="role"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Role</FormLabel>
-                                            <FormControl><Input {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+              {/* Right column: Avatar input and preview */}
+              <div className="flex-1 space-y-4">
+                <FormField
+                  control={form.control}
+                  name="avatar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Avatar</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => field.onChange(e.target.files ? e.target.files[0] : null)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {initialData.avatar && typeof initialData.avatar === 'string' && (
+                  <div className="mt-4">
+                    <p className="font-medium mb-2">Current Avatar</p>
+                    <Image
+                      src={initialData.avatar}
+                      alt="Avatar Preview"
+                      width={192}
+                      height={192}
+                      className="w-48 h-48 rounded object-cover"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
 
-                                <FormField
-                                    control={form.control}
-                                    name="bio"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Bio</FormLabel>
-                                            <FormControl><Textarea {...field} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+            {/* Buttons */}
+            <div className="flex gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1" disabled={isSubmitting}>
+             {isSubmitting ? "Updating..." : "Update Member"}
 
-                                {/* Socials as array */}
-                                <div className="space-y-2">
-                                    <label className="font-medium">Social Links</label>
-                                    {fields.map((field, index) => (
-                                        <div key={field.id} className="flex gap-3">
-                                            <FormField
-                                                control={form.control}
-                                                name={`socials.${index}.platform`}
-                                                render={({ field }) => (
-                                                    <FormItem className="flex-1">
-                                                        <FormControl>
-                                                            <Input placeholder="Platform (e.g. Facebook)" {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name={`socials.${index}.url`}
-                                                render={({ field }) => (
-                                                    <FormItem className="flex-1">
-                                                        <FormControl>
-                                                            <Input placeholder="URL (https://...)" {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <Button type="button" variant="destructive" onClick={() => remove(index)}>
-                                                ✕
-                                            </Button>
-                                        </div>
-                                    ))}
-                                    <Button
-                                        type="button"
-                                        onClick={() => append({ platform: '', url: '' })}
-                                        variant="outline"
-                                        className="ml-2"
-                                    >
-                                        + Add Social Link
-                                    </Button>
-                                </div>
-
-                                <FormField
-                                    control={form.control}
-                                    name="avatar"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Avatar</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={(e) =>
-                                                        field.onChange(e.target.files && e.target.files[0] ? [e.target.files[0]] : [])
-                                                    }
-                                                />
-                                            </FormControl>
-                                            {initialData.avatar && typeof initialData.avatar === 'string' && (
-                                                initialData.avatar.startsWith('http') || initialData.avatar.startsWith('/') ? (
-                                                    <Image
-                                                        src={initialData.avatar}
-                                                        alt="Avatar Preview"
-                                                        width={96}
-                                                        height={96}
-                                                        className="w-24 h-24 mt-2 rounded"
-                                                    />
-                                                ) : (
-                                                    <img
-                                                        src={initialData.avatar}
-                                                        alt="Avatar Preview"
-                                                        width={96}
-                                                        height={96}
-                                                        className="w-24 h-24 mt-2 rounded"
-                                                    />
-                                                )
-                                            )}
-                                            {initialData.avatar && typeof initialData.avatar !== 'string' && (
-                                                <Image
-                                                    src={URL.createObjectURL(initialData.avatar[0])}
-                                                    alt="Avatar Preview"
-                                                    width={96}
-                                                    height={96}
-                                                    className="w-24 h-24 mt-2 rounded"
-                                                />
-                                            )}
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                            </div>
-                        </div>
-
-                        <div className="flex gap-2 pt-4">
-                            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-                                Cancel
-                            </Button>
-                            <Button type="submit" className="flex-1">
-                                Update Service
-                            </Button>
-                        </div>
-                    </form>
-                </Form>
-            </DialogContent>
-        </Dialog>
-    );
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
 }
