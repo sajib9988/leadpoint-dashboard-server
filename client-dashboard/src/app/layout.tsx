@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import App from "next/app";
-
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -12,7 +10,7 @@ const geistSans = Geist({
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--lp-font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -31,19 +29,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-
-          </div>
-        </header>
-              <Toaster richColors position="top-center" />
-        <div className="p-4 pt-0 min-h-screen">{children}</div>
-
-       
-
-
-        
+        <Toaster richColors position="top-center" />
+        {children}
       </body>
     </html>
   );

@@ -1,4 +1,3 @@
-
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -14,6 +13,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import TeamMemberTable from "@/module/table/TeamMemberTable"
+import ServiceTable from "@/module/table/ServiceTable"
 
 export default function Page() {
   return (
@@ -43,12 +44,16 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
+          <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+            <div className="bg-muted/50 rounded-xl p-4">
+              <h2 className="text-lg font-semibold mb-2">Team Members</h2>
+              <TeamMemberTable />
+            </div>
+            <div className="bg-muted/50 rounded-xl p-4">
+              <h2 className="text-lg font-semibold mb-2">Services</h2>
+              <ServiceTable />
+            </div>
           </div>
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
         </div>
       </SidebarInset>
     </SidebarProvider>
