@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { updateMember } from '@/service/AddTeamMember';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { delay } from '@/lib/delay';
 
 const socialSchema = z.object({
   platform: z.string().min(1, 'Platform is required'),
@@ -58,36 +59,42 @@ const router = useRouter();
   });
 
 const onSubmit = async (data: MemberFormValues) => {
-  setIsSubmitting(true); // Start loading
+  setIsSubmitting(true);
 
   const formData = new FormData();
+
   formData.append(
-    'data',
+    "data",
     JSON.stringify({
       name: data.name,
       role: data.role,
       bio: data.bio,
-      socials: Array.isArray(data.socials) ? data.socials : [],
+      socials: data.socials,
     })
   );
 
   if (data.avatar && data.avatar instanceof File) {
-    formData.append('avatar', data.avatar);
+    formData.append("avatar", data.avatar);
   }
 
   try {
     await updateMember(memberId, formData);
+
+    await delay(1500); // ১.৫ সেকেন্ড delay
     toast.success("Member updated successfully!");
+
+    await delay(1000); // Toast এর পরে ১ সেকেন্ড delay
+
     form.reset();
     router.push("/");
     router.refresh();
     onSuccess?.();
     onClose();
   } catch (err) {
-    toast.error('Failed to update team member');
-    console.error('Error updating member:', err);
+    toast.error("Failed to update team member");
+    console.error("Error updating member:", err);
   } finally {
-    setIsSubmitting(false); // Stop loading
+    setIsSubmitting(false);
   }
 };
 
