@@ -3,6 +3,7 @@ import cors from 'cors';
 import httpStatus from 'http-status';
 import router from './app/route.ts';
 import globalErrorHandler from './app/utils/globalErrorHandler';
+import cookieParser from 'cookie-parser';
 
 
 
@@ -12,8 +13,13 @@ import globalErrorHandler from './app/utils/globalErrorHandler';
 
 
 const app: Application = express();
-app.use(cors());
-// app.use(cookieParser());
+app.use(cors(
+    {
+        origin: ['http://localhost:3000', 'https://leadpoint.vercel.app'],
+        credentials: true, // Allow cookies to be sent with requests
+    }
+));
+app.use(cookieParser());
 
 //parser
 app.use(express.json());

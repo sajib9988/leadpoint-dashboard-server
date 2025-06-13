@@ -22,6 +22,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { logout } from "@/service/auth"
 
 export function NavUser({
   user,
@@ -35,8 +36,8 @@ export function NavUser({
   const router = useRouter()
   const { isMobile } = useSidebar()
 
-  const handleLogout = () => {
-    // TODO: Add your token cleanup or auth logic here
+  const handleLogout = async () => {
+    await logout()
     router.push("/login")
   }
 
