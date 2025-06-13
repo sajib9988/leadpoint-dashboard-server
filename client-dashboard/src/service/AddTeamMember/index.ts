@@ -8,7 +8,7 @@ export const addTeamMember = async (data: FormData) => {
     method: 'POST',
     body: data,
   });
-
+console.log(await res.json());
   if (!res.ok) {
     const errText = await res.text();
     console.log('📛 Server Error:', errText);
