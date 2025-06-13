@@ -9,7 +9,7 @@ import {
 import * as React from 'react'
 
 type DataTableProps<TData> = {
-  columns: ColumnDef<TData, any>[]
+  columns: ColumnDef<TData, unknown>[]
   data: TData[]
 }
 

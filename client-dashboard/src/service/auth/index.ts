@@ -6,10 +6,8 @@ import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 
 export const registerUser = async (userData: FieldValues) => {
-
-
   try {
-      console.log("Making API call to:", `${process.env.NEXT_PUBLIC_BASE_API}/user/register`);
+    console.log("Making API call to:", `${process.env.NEXT_PUBLIC_BASE_API}/user/register`);
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user/register`, {
       method: "POST",
       headers: {
@@ -44,7 +42,6 @@ export const loginUser = async (userData: FieldValues) => {
     }
     console.log("token", result.data.accessToken);
     return result;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return Error(error);
   }

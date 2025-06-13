@@ -3,14 +3,12 @@
 import * as React from "react"
 import { Users, PlusCircle } from "lucide-react"
 
-import { useRouter } from "next/navigation"
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
 
@@ -51,8 +49,6 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const router = useRouter()
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
