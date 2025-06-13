@@ -12,10 +12,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { getCurrentUser, loginUser } from '@/service/AuthService';
-import { toast } from 'sooner';
-import { useUser } from '@/context/userContext';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import { getCurrentUser, loginUser } from '@/service/auth';
+import { toast } from 'sonner';
 
 // ✅ Zod Schema
 const loginSchema = z.object({
@@ -44,12 +44,14 @@ const onSubmit = async (data: LoginSchema) => {
       toast.success(res.message || "Login successful");
 
       const currentUser = await getCurrentUser();
-      router.push("/"); // Redirect to homepage
+      setUser(currentUser); // Set the user in context
+      router.push("/dashboard"); // Redirect to homepage
   
     } else {
       toast.error(res.message || "Login failed");
     }
-  } catch (error: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error: unknown) {
     // console.error("Login error:", error);
     toast.error("Something went wrong during login");
   }

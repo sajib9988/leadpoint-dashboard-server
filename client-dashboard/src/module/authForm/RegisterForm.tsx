@@ -15,14 +15,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-// import { registerUser, getCurrentUser } from "@/service/AuthService";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useUser } from "@/context/userContext";
+import { getCurrentUser, registerUser } from "@/service/auth";
+import { useUser } from "@/context/UserContext";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterForm() {
   const router = useRouter();
   const { setUser } = useUser();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   const form = useForm<RegistrationSchemaType>({
     resolver: zodResolver(registrationSchema),
@@ -51,11 +55,12 @@ export default function RegisterForm() {
         toast.success(res.message);
         const currentUser = await getCurrentUser();
         setUser(currentUser);
-        router.push("/");
+        router.push("/login");
       } else {
         toast.error(res.message || "Registration failed");
       }
-    } catch (error: any) {
+
+    } catch (error: unknown) {
       toast.error("Something went wrong");
       console.error(error);
     }
@@ -102,7 +107,24 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <div className="relative">
+                    <Input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      {...field} 
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -116,7 +138,24 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <div className="relative">
+                    <Input 
+                      type={showPasswordConfirm ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      {...field} 
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                    >
+                      {showPasswordConfirm ? (
+                        <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

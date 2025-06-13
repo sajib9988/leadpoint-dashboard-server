@@ -1,16 +1,17 @@
 import express from 'express';
-import { customerRoutes } from '../modules/customer/customer.route';
+
 
 import { teamMemberRouter } from '../modules/teamMember/teamMember.route';
 import { serviceRoute } from '../modules/service/service.route';
+import { AuthRoutes } from '../modules/auth/auth.route';
 
 
 const router = express.Router();
 
 const moduleRoutes = [
     {
-        path: '/customers',
-        route: customerRoutes
+        path: '/user',
+        route: AuthRoutes
     },
 
     {

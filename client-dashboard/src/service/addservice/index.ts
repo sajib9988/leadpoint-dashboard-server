@@ -1,13 +1,18 @@
 'use server'
 
 import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
 
 // ✅ Add Service
 export const addService = async (data: FormData) => {
-  console.log("📡 Sending POST to backend...");
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/add-service`, {
+ const accessToken = (await cookies()).get("accessToken")?.value;
+
+ const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/add-service`, {
     method: 'POST',
     body: data,
+      headers: {
+      Authorization : accessToken as string
+    },
   });
 
   console.log('resss', res);
@@ -23,8 +28,13 @@ export const addService = async (data: FormData) => {
 
 // ✅ Get All Services
 export const getAllServices = async () => {
+
+   const accessToken = (await cookies()).get("accessToken")?.value;
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/all-services`, {
     method: 'GET',
+    headers: {
+      Authorization: accessToken as string,
+    },
     // 🏷 Add a tag so Next.js knows to revalidate this
     next: {
       tags: ['services'],
@@ -57,8 +67,13 @@ export const getServiceById = async (id: string) => {
 
 // ✅ Delete Service
 export const deleteService = async (id: string) => {
+
+  const accessToken = (await cookies()).get("accessToken")?.value;
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/delete-service/${id}`, {
     method: 'DELETE',
+    headers: {
+      Authorization: accessToken as string,
+    },
   });
 
   if (!res.ok) {
@@ -72,9 +87,13 @@ export const deleteService = async (id: string) => {
 
 // ✅ Update Service
 export const updateService = async (id: string, data: FormData) => {
+  const accessToken = (await cookies()).get("accessToken")?.value;
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/update-service/${id}`, {
     method: 'PUT',
     body: data,
+    headers: {
+      Authorization: accessToken as string,
+    },
   });
 
   revalidateTag('services');

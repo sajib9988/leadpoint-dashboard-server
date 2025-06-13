@@ -6,8 +6,11 @@ import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 
 export const registerUser = async (userData: FieldValues) => {
+
+
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user`, {
+      console.log("Making API call to:", `${process.env.NEXT_PUBLIC_BASE_API}/user/register`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
