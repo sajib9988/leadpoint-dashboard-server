@@ -3,13 +3,11 @@
 import { z } from 'zod';
 
 export const registerUserZodSchema = z.object({
-  body: z.object({
-    name: z.string({ required_error: 'Name is required' }).min(1, 'Name cannot be empty'),
-    email: z
-      .string({ required_error: 'Email is required' })
-      .email('Invalid email format'),
-    password: z
-      .string({ required_error: 'Password is required' })
-      .min(6, 'Password must be at least 6 characters'),
-  }),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  passwordConfirm: z.string().min(6, "Please confirm your password"),
+}).refine((data) => data.password === data.passwordConfirm, {
+  message: "Passwords do not match",
+  path: ["passwordConfirm"],
 });

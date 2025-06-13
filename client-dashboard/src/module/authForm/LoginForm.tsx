@@ -39,7 +39,7 @@ const Login: React.FC = () => {
 const onSubmit = async (data: LoginSchema) => {
   try {
     const res = await loginUser(data); // API call to login
-
+console.log("Login response:", res);
     if (res?.success) {
       toast.success(res.message || "Login successful");
 
