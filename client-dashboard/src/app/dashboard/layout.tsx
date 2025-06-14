@@ -1,6 +1,5 @@
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { Toaster } from "sonner";
 import "../globals.css";
 
 export default function RootLayout({
@@ -17,7 +16,6 @@ export default function RootLayout({
             <SidebarTrigger className="-ml-1" />
           </div>
         </header>
-        <Toaster richColors position="top-center" />
         <div className="p-4 pt-0 min-h-screen">{children}</div>
       </SidebarInset>
     </SidebarProvider>

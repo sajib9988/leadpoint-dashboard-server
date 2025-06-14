@@ -34,7 +34,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     handleUser();
-  }, [isLoading]);
+  }, []); // Empty dependency array
 
   return (
     <UserContext.Provider value={{ user, setUser, isLoading, setIsLoading }}>
