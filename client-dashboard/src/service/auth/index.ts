@@ -55,11 +55,17 @@ export const getCurrentUser = async () => {
     accessToken ? "Token exists" : "No token found"
   );
 
-  let decodedData = null;
-
   if (accessToken) {
-    decodedData = await jwtDecode(accessToken);
-    return decodedData;
+    try {
+      // Assuming jwtDecode might return a promise or be async based on previous 'await'
+      // If jwtDecode is synchronous, the 'await' can be removed.
+      // For safety and consistency with prior use, keeping await.
+      const decodedData = await jwtDecode(accessToken);
+      return decodedData;
+    } catch (error) {
+      console.error("Error decoding access token:", error);
+      return null;
+    }
   } else {
     return null;
   }
