@@ -18,7 +18,7 @@ const auth = (...roles: string[]) => {
 
             req.user = verifiedUser;
  
-            if (roles.length && !roles.includes(verifiedUser.role)) {
+            if (roles.length && !roles.includes(verifiedUser.role ?? "")) {
                 throw new ApiError(httpStatus.FORBIDDEN, "Forbidden!")
             }
             next()
