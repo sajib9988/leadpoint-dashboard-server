@@ -1,3 +1,5 @@
+import { JwtPayload } from "jwt-decode";
+
 export type TUser = {
   id: string;
   name: string;
@@ -7,3 +9,5 @@ export type TUser = {
   updatedAt: string;
 
 };
+
+export type DecodedUser = JwtPayload & TUser;

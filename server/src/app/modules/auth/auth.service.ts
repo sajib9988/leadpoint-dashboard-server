@@ -43,9 +43,11 @@ const logInUser = async (
   // ✅ Token Generate
   const accessToken = jwtHelpers.createToken(
     {
-      userId: userData.id,
+      id: userData.id,
       email: userData.email,
       name: userData.name,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt,
     },
     config.jwt.secret as string,
     config.jwt.expiresIn as string
@@ -53,9 +55,11 @@ const logInUser = async (
 
   const newRefreshToken = jwtHelpers.createToken(
     {
-      userId: userData.id,
+      id: userData.id,
       email: userData.email,
       name: userData.name,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt,
     },
     config.jwt.refresh_token_secret as string,
     config.jwt.refresh_token_expires_in as string
@@ -83,9 +87,11 @@ const refreshToken = async (token: string) => {
 
   const accessToken = jwtHelpers.createToken(
     {
-      userId: userData.id,
+      id: userData.id,
       email: userData.email,
       name: userData.name,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt,
     },
     config.jwt.secret as string,
     config.jwt.expiresIn as string
