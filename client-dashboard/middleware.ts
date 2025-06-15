@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 
-const publicRoutes = ["/login"];
+
+const publicRoutes = ["/login", "/register"];
 
 export const middleware = async (request: NextRequest) => {
   const { pathname, origin } = request.nextUrl;
@@ -31,6 +32,5 @@ export const middleware = async (request: NextRequest) => {
 };
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
-
