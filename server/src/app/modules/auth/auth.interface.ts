@@ -1,11 +1,12 @@
 // auth.interface.ts
 
 export interface IJwtPayload {
-  userId?: string;
+  id: string; // Renamed from userId and made mandatory
   email: string;
-  name: string | null;
-  password?: string;
-  role?: string; // Add role to IJwtPayload for RBAC
+  name: string; // No longer allows null
+  role?: string;
+  createdAt: string; // Added
+  updatedAt: string; // Added
   iat?: number;
   exp?: number;
 }
