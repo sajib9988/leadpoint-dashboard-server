@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Film, User, Key } from 'lucide-react';
+import {  User, Key } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -63,8 +63,8 @@ console.log("Login response:", res);
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2 text-primary font-bold text-2xl">
-            <Film className="h-8 w-8" />
-            <span>MediaHaven</span>
+            
+            <span>Lead-Point</span>
           </Link>
           <h1 className="text-2xl font-bold mt-4">Welcome Back</h1>
           <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
