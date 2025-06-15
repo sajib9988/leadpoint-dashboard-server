@@ -1,7 +1,7 @@
 'use client';
 
 
-import { getCurrentUser } from '@/service/auth';
+// import { getCurrentUser } from '@/service/auth';
 import { TUser } from '@/type';
 
 
@@ -10,7 +10,7 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
-  useEffect,
+
   useState,
 } from 'react';
 
@@ -26,15 +26,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<TUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleUser = async () => {
-    const user = await getCurrentUser();
-    setUser(user);
-    setIsLoading(false);
-  };
 
-  useEffect(() => {
-    handleUser();
-  }, []); // Empty dependency array
 
   return (
     <UserContext.Provider value={{ user, setUser, isLoading, setIsLoading }}>
