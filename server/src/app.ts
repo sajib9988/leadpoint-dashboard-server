@@ -16,9 +16,10 @@ const app: Application = express();
 app.use(cors(
     {
         origin: ['http://localhost:3000',
-            'https://leadpoint-dashboard-client.vercel.app/login'
+            'https://leadpoint-dashboard-client.vercel.app/login', 'https://lead-point-main.vercel.app/'
+            
         ],
-        credentials: true, // Allow cookies to be sent with requests
+        credentials: true, 
     }
 ));
 app.use(cookieParser());
