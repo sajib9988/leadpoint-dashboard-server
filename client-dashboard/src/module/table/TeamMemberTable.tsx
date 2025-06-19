@@ -30,6 +30,7 @@ const TeamMemberTable = () => {
     try {
       setLoading(true);
       const res = await getAllMember();
+      console.log('res get team members', res);
       setData(res.data);
     } catch (error) {
       console.error('Error fetching data:', error);

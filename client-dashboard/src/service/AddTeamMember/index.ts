@@ -1,65 +1,70 @@
 'use server';
 
-// import { cookies } from 'next/headers';
 import { revalidateTag } from 'next/cache';
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_API;
+
 export const addTeamMember = async (data: FormData) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/team-members/create`, {
+  const res = await fetch(`${BASE_URL}/team-members/create`, {
     method: 'POST',
     body: data,
   });
-console.log(await res.json());
+
+  const result = await res.json();
+
   if (!res.ok) {
-    const errText = await res.text();
-    console.log('📛 Server Error:', errText);
-    throw new Error('Failed to add team member');
+    console.error("API Error:", result);
+    throw new Error(result?.message || "Something went wrong while adding team member");
   }
 
   revalidateTag('team-members');
-  return res.json();
-};
-
-export const getAllMember = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/team-members/members`, {
-    method: 'GET',
-  });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    console.log('📛 Server Error:', errText);
-    throw new Error('Failed to get team members');
-  }
-
-  return res.json();
+  return result;
 };
 
 export const updateMember = async (id: string, data: FormData) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/team-members/update/${id}`, {
+  const res = await fetch(`${BASE_URL}/team-members/update/${id}`, {
     method: 'PUT',
     body: data,
   });
 
+  const result = await res.json();
+
   if (!res.ok) {
-    const errText = await res.text();
-    console.log('📛 Server Error:', errText);
-    throw new Error('Failed to update team member');
+    console.error("API Error:", result);
+    throw new Error(result?.message || "Something went wrong while updating team member");
   }
 
   revalidateTag('team-members');
-  return res.json();
+  return result;
 };
 
 export const deleteMember = async (id: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/team-members/${id}`, {
+  const res = await fetch(`${BASE_URL}/team-members/${id}`, {
     method: 'DELETE',
   });
 
+  const result = await res.json();
+
   if (!res.ok) {
-    const errText = await res.text();
-    console.log('📛 Server Error:', errText);
-    throw new Error('Failed to delete team member');
+    console.error("API Error:", result);
+    throw new Error(result?.message || "Something went wrong while deleting team member");
   }
 
   revalidateTag('team-members');
-  return res.json();
+  return result;
+};
+
+export const getAllMember = async () => {
+  const res = await fetch(`${BASE_URL}/team-members/members`, {
+    method: 'GET',
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    console.error("API Error:", result);
+    throw new Error(result?.message || "Failed to load team members");
+  }
+
+  return result;
 };

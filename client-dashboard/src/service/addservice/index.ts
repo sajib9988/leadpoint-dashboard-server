@@ -35,10 +35,12 @@ export const getAllServices = async () => {
     headers: {
       Authorization: accessToken as string,
     },
-    // 🏷 Add a tag so Next.js knows to revalidate this
+
     next: {
       tags: ['services'],
     },
+
+   
   });
 
   if (!res.ok) {

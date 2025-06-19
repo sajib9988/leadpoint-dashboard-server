@@ -32,7 +32,8 @@ const ServiceTable = () => {
     try {
       setLoading(true)
       const res = await getAllServices()
-      console.log('res get service', res)
+      // console.log('res get service', res)
+
       setData(res.data)
     } catch (error) {
       console.error('Error fetching data:', error)
