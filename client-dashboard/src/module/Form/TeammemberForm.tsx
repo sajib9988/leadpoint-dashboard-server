@@ -79,7 +79,7 @@ export function TeammemberForm() {
 
     toast.success('Team member created successfully!');
     form.reset();
-    router.push('/');
+    router.push('/dashboard/add-team-member');
   };
 
   return (

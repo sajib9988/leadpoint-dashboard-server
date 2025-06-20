@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import { teamMemberZodSchema, updateTeamMemberZodSchema } from './teamMember.validation';
 import { fileUploader } from '../../helper/fileUploader';
 import { teamMemberController } from './teamMember.cotroller';
+import auth from '../../middleware/auth';
 
 
 const router = express.Router();
@@ -12,6 +13,7 @@ router.delete('/:id', teamMemberController.deleteMember);
 
 router.post(
   '/create',
+  auth(),
   fileUploader.upload.single('avatar'),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = teamMemberZodSchema.parse(JSON.parse(req.body.data));
